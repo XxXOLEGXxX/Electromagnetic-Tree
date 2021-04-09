@@ -12,11 +12,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
+	num: "0.1.1",
 	name: "Literally nothing, kinda",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h4>v0.1.1</h3>
+		- Changed some titles and descriptions to make more sense.<br>
+		- Made it so 6th milestone wouldn't appear after achieving 4th.<br>
 	<h3>v0.1</h3><br>
 		- Mod was created on April 10th with two layers.<br>
 		- Garbage mechanic is introduced to make this thing possible.`
