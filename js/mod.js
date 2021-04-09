@@ -17,9 +17,9 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+	<h3>v0.1</h3><br>
+		- Mod was created on April 10th with two layers.<br>
+		- Garbage mechanic is introduced to make this thing possible.`
 
 let winText = `Congrats for beating TET v0.1... Yep, that's all there is for now.`
 
