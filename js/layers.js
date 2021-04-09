@@ -40,8 +40,8 @@ addLayer("ou", {
 		rows: 1,
 		cols: 5,
 		11: {
-			fullDisplay: `<h3>Hertz Generator</h3><br>
-						 Produces hertz and, therefore, shrinks down wavelength<br><br>
+			fullDisplay: `<h3>Wavelength Shrinker</h3><br>
+						 Shrinks wavelength and, therefore, increases hertz<br><br>
 						<h4>Requirement: 8.80e26m<br>`,
 			canAfford() {return new Decimal(299792458).div(player.points)<=8.81e+26},
 			onPurchase() {return player.ou.garbageLevel = new Decimal(0.1)}
@@ -49,7 +49,7 @@ addLayer("ou", {
 		12: {
 			fullDisplay: `<h3>Cosmic Garbage</h3><br>
 						 Garbage boosts garbage generator's gain<br>
-						 [Hertz Reset]<br><br>
+						 [Wavelength Reset]<br><br>
 						<h4>Requirement: 6.50e26m<br>`,
 			canAfford() {return new Decimal(299792458).div(player.points)<=6.5e+26},
 			onPurchase() {return player.points = modInfo.initialStartPoints},
@@ -58,7 +58,7 @@ addLayer("ou", {
 		13: {
 			fullDisplay: `<h3>Better Garbage Generator</h3><br>
 						 Garbage generator generates thrice as much<br>
-						 [Hertz Reset]<br><br>
+						 [Wavelength Reset]<br><br>
 						<h4>Requirement: 1.75e26m<br>`,
 			canAfford() {return new Decimal(299792458).div(player.points)<=1.75e+26},
 			onPurchase() {return player.points = modInfo.initialStartPoints},
@@ -77,7 +77,7 @@ addLayer("ou", {
 	milestones: {
 		0: {
 			requirementDescription: "Version v0.1",
-			effectDescription: "Obtain Hertz Generator, duh.<br/>Reward: Garbage generator and manual garbage collecting",
+			effectDescription: "Obtain Wavelength Shrinker, duh.<br/>Reward: Garbage generator and manual garbage collecting",
 			done() { return player.ou.garbageLevel.gte(0.1) },
 			unlocked() {return hasUpgrade("ou", 11)}
 		},
@@ -95,21 +95,21 @@ addLayer("ou", {
 		},
 		3: {
 			requirementDescription: "Version v0.4",
-			effectDescription: "Reach v0.4.<br/>Reward: Hertz Generator's formula is a slightly better",
+			effectDescription: "Reach v0.4.<br/>Reward: Wavelength Shrinker's formula is slightly better",
 			done() { return player.ou.garbageLevel.gte(0.4) },
 			unlocked() {return hasMilestone("ou", 2)}
 		},
 		4: {
 			requirementDescription: "Version v0.5",
-			effectDescription() {return "Reach v0.5.<br/>Reward: Unlocks one more upgrade and Hertz Generator works better based on versions achieved so far.<br/>Currently: x"+format(new Decimal(player.ou.milestones.length).root(3))},
+			effectDescription() {return "Reach v0.5.<br/>Reward: Unlocks one more upgrade and Wavelength Shrinker works better based on versions achieved so far.<br/>Currently: x"+format(new Decimal(player.ou.milestones.length).root(3))},
 			done() { return player.ou.garbageLevel.gte(0.5) },
 			unlocked() {return hasMilestone("ou", 3)}
 		},
 		5: {
 			requirementDescription: "Version v0.6",
-			effectDescription: "Reach v0.6.<br/>Reward: Current Endgame",
+			effectDescription: "Reach v0.6.<br/>[ENDGAME]",
 			done() { return player.ou.garbageLevel.gte(0.6) },
-			unlocked() {return hasMilestone("ou", 3)}
+			unlocked() {return hasMilestone("ou", 4)}
 		},
 	},
 	buyables: {
@@ -182,7 +182,7 @@ addLayer("rw", {
 		cols: 1,
 		11: {
 			name: "Enter The Spectrum",
-			challengeDescription: "γ softcap is triggers at 1 hertz, but HG version's boost exponented by 2",
+			challengeDescription: "γ softcap is triggers at 1 hertz, but WS version's boosts are exponented by 2",
 			rewardDescription: "ELF's hardcap is softcapped",
 			currencyDisplayName: "hertz",
 			goal: new Decimal(100),
