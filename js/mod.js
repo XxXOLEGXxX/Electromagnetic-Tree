@@ -12,11 +12,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3",
+	num: "0.3.0.1",
 	name: "\"Fuck it, I'm pushing the update NOW.\"",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h5>v0.3.0.1<h5>
+		- Now it says "garbagewave" instead of "microwave" where it's supposed to be<br>
 	<h3>v0.3</h3><br>
 		- Microwave Layer is finished<br>
 		- Infrared Layer (not finished yet) was added because I can and why not<br>
@@ -43,7 +45,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Garbage mechanic is introduced to make this thing possible.<br><br>
 		Fun fact: Did you know that v0.3 update added 35,000 symbols in both layers.js and mod.js (+19,453/+5,253) (no, this isn't Shenanigans Tree reference), which makes it two times heavier than v0.2. Pretty cool, huh?`
 
-let winText = `Well done, you bastards. You've beaten The Electromagnetic Tree v0.3... Good luck getting up to near-infrared radiation softcap without any new content lmao`
+let winText = `Well done, you bastards. You've beaten The Electromagnetic Tree v0.3.0.1... Good luck getting up to near-infrared radiation softcap without any new content lmao`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
