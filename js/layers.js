@@ -299,7 +299,7 @@ addLayer("m", {
 				function() {return player.s.points.gte(2) ? "You have "+format(player.m.garbageWaves)+" garbagewave points, boosting Garbage Generator's effeciency by "+format(layers.m.effect2())+"%" : ""},
 				{"color": "white", "font-size": "24px"}], "blank",
 				["display-text",
-				function() {return player.m.garbageWaves.gt(0) ? "You're generating "+format(player.m.gps)+" microwave points per second" : ""},
+				function() {return player.m.garbageWaves.gt(0) ? "You're generating "+format(player.m.gps)+" garbagewave points per second" : ""},
 				{"color": "white", "font-size": "16px"}]],
     color: "#1F1F1F",
     type: "none", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
