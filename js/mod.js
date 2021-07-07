@@ -12,11 +12,20 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3.0.1",
-	name: "\"Fuck it, I'm pushing the update NOW.\"",
+	num: "0.4",
+	name: "Over 1 month later...",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<h3>v0.4</h3><br>
+		- Lots of progress was made on Infrared Layer<br>
+		- Three more version milestones were added in<br>
+		- Two Infrared challenges were added in<br>
+		- Two more "clickable" werey added in<br>
+		- Fixed softlock, where you could get stuck in challenge after Spectrum Reset
+		- Five more Infrared upgrades were added in<br>
+		- Now you can grind versions after achieving the last milestone version (tho don't expect to get far)
+		- Added 3rd Spectrum milestone
 	<h5>v0.3.0.1<h5>
 		- Now it says "garbagewave" instead of "microwave" where it's supposed to be<br>
 	<h3>v0.3</h3><br>
@@ -76,8 +85,10 @@ function getPointGen() {
 	else if(inChallenge("rw", 11) && hasMilestone("ou", 3)) base = base.div(player.ou.garbageLevel.add(layers.s.effect()).mul(12.5))
 	else if(inChallenge("rw", 11)) base = base.div(player.ou.garbageLevel.add(layers.s.effect()).mul(10))
 	let gain = new Decimal(player.points.div(base))
-	if(hasUpgrade("ou", 14)) gain = gain.mul(2)
-	if(hasUpgrade("ou", 15)) gain = gain.mul(player.ou.garbagePoints.add(20).log(20))
+	if(hasUpgrade("ou", 14) && hasMilestone("s", 2)) gain = gain.mul(4)
+	else if(hasUpgrade("ou", 14)) gain = gain.mul(2)
+	if(hasUpgrade("ou", 15) && hasMilestone("s", 2)) gain = gain.mul(player.ou.garbagePoints.add(20).log(20).pow(2))
+	else if(hasUpgrade("ou", 15)) gain = gain.mul(player.ou.garbagePoints.add(20).log(20))
 	if(hasMilestone("ou", 4)) gain = gain.mul(new Decimal(player.ou.milestones.length).root(3))
 	if(hasMilestone("ou", 5)) gain = gain.mul(new Decimal(player.ou.upgrades.length).root(2))
 	if(hasMilestone("ou", 6) && inChallenge("mw", 12)) gain = gain.mul(new Decimal(player.ou.garbagePoints).root(10).div(3.1415926535897932384626433832795))
@@ -86,7 +97,14 @@ function getPointGen() {
 	if(hasMilestone("ou", 11)) gain = gain.mul(player.m.buyables[11].add(player.m.buyables[12].mag).div(100).add(1))
 	if(hasChallenge("rw", 22)) gain = gain.mul(9001)
 	if(hasChallenge("mw", 11)) gain = gain.mul(player.ou.garbagePoints.add(1).root(42))
-	if(player.m.unlocked == true) gain = gain.add(gain.mul(layers.m.effect().div(100)))
+	let infrafunny = new Decimal(0)
+	let dingus = new Decimal(0)
+	if(player.m.switch1.eq(1)) dingus = dingus.add(player.m.buyables[11])
+	if(player.m.switch2.eq(1)) dingus = dingus.add(player.m.buyables[12])
+	gain = gain.mul(dingus.div(100).add(1))
+	if(hasUpgrade("i", 13)) infrafunny = new Decimal(player.i.upgrades.length).mul(10)
+	if(hasUpgrade("i", 21) && (inChallenge("rw", 11) || inChallenge("rw", 12) || inChallenge("rw", 21) || inChallenge("rw", 22) || inChallenge("rw", 31) || inChallenge("mw", 11) || inChallenge("mw", 12) || inChallenge("i", 11))) gain = gain.mul(2)
+	if(player.m.unlocked == true) gain = gain.add(gain.mul(layers.m.effect().add(infrafunny).div(100)))
 	if(player.points.gte(2.99792458)) gain = gain.div(player.points.root(new Decimal(21).sub(1).div(baseSoftcapStrength).add(1)))
 	if(player.points.gte(29.9792458)) gain = gain.div(player.points.root(new Decimal(20).sub(1).div(baseSoftcapStrength).add(1)))
 	if(player.points.gte(299.792458)) gain = gain.div(player.points.root(new Decimal(19).sub(1).div(baseSoftcapStrength).add(1)))
@@ -98,18 +116,35 @@ function getPointGen() {
 	if(player.points.gte(299792458)) gain = gain.div(player.points.root(new Decimal(13).sub(1).div(baseSoftcapStrength).add(1)))
 	if(player.points.gte(2997924580)) gain = gain.div(player.points.root(new Decimal(12).sub(1).div(baseSoftcapStrength).add(1)))
 	if(player.points.gte(29979245800)) gain = gain.div(player.points.root(new Decimal(11).sub(1).div(baseSoftcapStrength).add(1)))
-	if(player.points.gte(299792458000)) gain = gain.div(player.points.root(new Decimal(10).sub(1).div(baseSoftcapStrength).add(1)))
-	if(player.points.gte(19986163866666.666666666666666667)) gain = gain.div(player.points.root(new Decimal(9).sub(1).div(baseSoftcapStrength).add(1)))
-	if(player.points.gte(36974403153333.333333333333333333)) gain = gain.div(player.points.root(new Decimal(8).sub(1).div(baseSoftcapStrength).add(1)))
-	if(player.points.gte(99930819333333.333333333333333335)) gain = gain.div(player.points.root(new Decimal(7.2).sub(1).div(baseSoftcapStrength).add(1)))
-	if(player.points.gte(99930819333333.333333333333333335)) gain = gain.div(player.points.root(new Decimal(6.2).sub(1).div(baseSoftcapStrength).add(1)))
+	if(hasUpgrade("i", 23)){if(player.points.gte(299792458000)) gain = gain.div(player.points.root(new Decimal(10).sub(1).div(baseSoftcapStrength).add(1)))
+							if(player.points.gte(19986163866666.666666666666666667)) gain = gain.div(player.points.root(new Decimal(9.5).sub(1).div(baseSoftcapStrength).add(1)))
+							if(player.points.gte(36974403153333.333333333333333333)) gain = gain.div(player.points.root(new Decimal(8.5).sub(1).div(baseSoftcapStrength).add(1)))
+							if(player.points.gte(99930819333333.333333333333333335)) gain = gain.div(player.points.root(new Decimal(7.5).sub(1).div(baseSoftcapStrength).add(1)))
+							if(player.points.gte(99930819333333.333333333333333335)) gain = gain.div(player.points.root(new Decimal(6.5).sub(1).div(baseSoftcapStrength).add(1)))}
+	else{if(player.points.gte(299792458000)) gain = gain.div(player.points.root(new Decimal(10).sub(1).div(baseSoftcapStrength).add(1)))
+	     if(player.points.gte(19986163866666.666666666666666667)) gain = gain.div(player.points.root(new Decimal(9).sub(1).div(baseSoftcapStrength).add(1)))
+		 if(player.points.gte(36974403153333.333333333333333333)) gain = gain.div(player.points.root(new Decimal(8).sub(1).div(baseSoftcapStrength).add(1)))
+		 if(player.points.gte(99930819333333.333333333333333335)) gain = gain.div(player.points.root(new Decimal(7).sub(1).div(baseSoftcapStrength).add(1)))
+		 if(player.points.gte(99930819333333.333333333333333335)) gain = gain.div(player.points.root(new Decimal(6).sub(1).div(baseSoftcapStrength).add(1)))}
 	if(player.points.gte(213851953373333.33333333333333334) && (!hasChallenge("rw", 11) && !inChallenge("rw", 11))) gain = new Decimal(0)
 	if((inChallenge("rw", 11) || inChallenge("rw", 22)) && player.points.gte(1)) gain = gain.div(player.points.root(new Decimal(2).sub(1).div(baseSoftcapStrength).add(1)))
 	if(inChallenge("rw", 12)) gain = gain.mul(3)
 	if(inChallenge("mw", 11)) gain = gain.root(3)
 	if(inChallenge("mw", 12)) gain = gain.div(new Decimal(3.1415926535897932384626433832795).pow(3.1415926535897932384626433832795))
+	if(inChallenge("i", 11)) gain = gain.div(new Decimal(16777216).root(player.ou.garbagePoints.add(1).root(256)))
+	if(inChallenge("i", 12)) gain = gain.div(new Decimal(16777216).pow(player.points.add(1).root(69)))
 	if(player.points.gte(299792458000000000000000000000000000000000) || player.ou.clickables[11] == "on" || (!hasChallenge("rw", 11) && !inChallenge("rw", 11) && player.points.gte(2.99792458))) gain = new Decimal(0)
 	return gain
+}
+
+function getWSEffeciency() {
+	let effect = player.m.points.mul(100).root(3)
+	let ding = new Decimal(0)
+	if(player.m.switch1.eq(1)) ding = ding.add(player.m.buyables[11])
+	if(player.m.switch2.eq(1)) ding = ding.add(player.m.buyables[12])
+	effect = effect.add(100).mul(ding.div(100).add(1)).sub(100)
+	if(hasUpgrade("i", 13)) effect = effect.add(new Decimal(10).mul(player.i.upgrades.length))
+	return effect
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
@@ -151,11 +186,11 @@ function fixOldSave(oldVersion){
 }
 
 function allChallenges() {
-	return new Decimal(player.rw.challenges[11] + player.rw.challenges[12] + player.rw.challenges[21] + player.rw.challenges[22] + player.rw.challenges[31] + player.mw.challenges[11] + player.mw.challenges[12])
+	return new Decimal(player.rw.challenges[11] + player.rw.challenges[12] + player.rw.challenges[21] + player.rw.challenges[22] + player.rw.challenges[31] + player.mw.challenges[11] + player.mw.challenges[12] + player.i.challenges[11] + player.i.challenges[12])
 }
 
 function infraredTracker() {
 	let funny = player.points.gte(213851953373333.33333333333333334) ? new Decimal(5) : player.points.gte(99930819333333.333333333333333335) ? new Decimal(4) : player.points.gte(36974403153333.333333333333333333) ? new Decimal(3) : player.points.gte(19986163866666.666666666666666667) ? new Decimal(2) : player.points.gte(299792458000) ? new Decimal(1) : new Decimal(0)
-	if(hasUpgrade("i", 11)) return new Decimal(funny.mul(1.93).add(1).toFixed(1))
+	if(hasUpgrade("i", 11)) return new Decimal(funny.mul(1.93).add(1).toFixed(2))
 	else return new Decimal(1)
 }
