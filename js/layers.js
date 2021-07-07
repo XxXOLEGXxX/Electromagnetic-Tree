@@ -23,7 +23,7 @@ addLayer("ou", {
 				function() {return hasUpgrade("ou", 11) && player.s.points.gte(1) ? "Current amount of garbages: "+format(player.ou.garbagePoints)+"<br/>Current version: "+format(player.ou.garbageLevel)+"(+"+format(layers.s.effect())+")<br/>Amount of garbages required for the next update: "+format(player.ou.garbageRequirement) : hasUpgrade("ou", 11) ? "Current amount of garbages: "+format(player.ou.garbagePoints)+"<br/>Current version: "+format(player.ou.garbageLevel)+"<br/>Amount of garbages required for the next update: "+format(player.ou.garbageRequirement) : ""},
 				{"color": "white", "font-size": "16px"}],
 				["display-text",
-				function() {return (player.s.points.gte(1) || player.m.points.gt(0)) && hasUpgrade("ou", 11) ? "Total boost from the Outside to WS's effeciency: +"+format(player.m.points.mul(100).root(3))+"%" : ""},
+				function() {return (player.s.points.gte(1) || player.m.points.gt(0)) && hasUpgrade("ou", 11) ? "Total boost from the Outside to WS's effeciency: +"+format(getWSEffeciency())+"%" : ""},
 				{"color": "white", "font-size": "16px"}],
 				["display-text",
 				function() {return (player.s.points.gte(2) || player.m.gps.gt(0)) && hasUpgrade("ou", 11) ? "Total boost from the Outside to GG's effeciency: +"+format(player.m.garbageWaves.mul(100).root(2))+"%" : ""},
@@ -32,11 +32,17 @@ addLayer("ou", {
 		let garbageGain = new Decimal(diff)
 		player.ou.display1 = new Decimal(diff)
 		player.ou.display2 = new Decimal(diff)
-		if(hasUpgrade("ou", 12)) garbageGain = garbageGain.mul(player.ou.garbagePoints.add(10).log(10))
-		if(hasUpgrade("ou", 13)) garbageGain = garbageGain.mul(3)
+		if(hasMilestone("s", 2) && hasUpgrade("ou", 12)) garbageGain = garbageGain.mul(player.ou.garbagePoints.add(10).log(10).pow(2))
+		else if(hasUpgrade("ou", 12)) garbageGain = garbageGain.mul(player.ou.garbagePoints.add(10).log(10))
+		if(hasUpgrade("ou", 13) && hasMilestone("ou", 13) && hasMilestone("s", 2)) garbageGain = garbageGain.mul(729)
+		else if(hasUpgrade("ou", 13) && hasMilestone("ou", 13)) garbageGain = garbageGain.mul(27)
+		else if(hasUpgrade("ou", 13) && hasMilestone("s", 2)) garbageGain = garbageGain.mul(9)
+		else if(hasUpgrade("ou", 13)) garbageGain = garbageGain.mul(3)
 		if(hasChallenge("rw",12)) garbageGain = garbageGain.mul(new Decimal(1).add(player.ou.garbageLevel.add(layers.s.effect()).mul(2)).pow(new Decimal(1).add(player.ou.garbageLevel.add(layers.s.effect()))))
 		if(hasChallenge("rw",21)) garbageGain = garbageGain.mul(50)
 		if(hasMilestone("ou",6)) garbageGain = garbageGain.mul(2)
+		if(hasMilestone("ou", 6) && inChallenge("mw", 12) && hasChallenge("i", 11)) garbageGain = garbageGain.mul(new Decimal(player.ou.garbagePoints).root(10).div(3.1415926535897932384626433832795))
+		else if(hasMilestone("ou", 6) && hasChallenge("i", 11)) garbageGain = garbageGain.mul(new Decimal(player.ou.garbagePoints).root(10))
 		if(hasMilestone("ou",7)) garbageGain = garbageGain.mul(4)
 		if(hasMilestone("ou",8)) garbageGain = garbageGain.mul(10)
 		if(player.ou.clickables[11] == "on") { garbageGain = garbageGain.mul(player.ou.garbageLevel.add(layers.s.effect()).add(1))
@@ -46,12 +52,14 @@ addLayer("ou", {
 		else if(inChallenge("rw", 11) && hasMilestone("ou", 3)) garbageGain = garbageGain.mul(player.ou.garbageLevel.add(layers.s.effect()).mul(1.25).add(1))
 		if(hasMilestone("ou", 11)) garbageGain = garbageGain.mul(player.m.buyables[11].add(player.m.buyables[12].mag).div(100).add(1))
 		else if(inChallenge("rw", 11)) garbageGain = garbageGain.mul(player.ou.garbageLevel.add(layers.s.effect()).add(1))}
+		if(hasMilestone("ou", 12)) garbageGain = garbageGain.pow(1.01)
+		if(hasUpgrade("i", 22)) garbageGain = garbageGain.mul(infraredTracker().mag)
 		if(hasChallenge("mw", 11)) garbageGain = garbageGain.mul(player.points.add(1).root(21))
 		if(hasChallenge("mw", 12)) garbageGain = garbageGain.mul(new Decimal(3.1415926535897932384626433832795).pow(3.1415926535897932384626433832795))
 		if(player.m.unlocked == true) garbageGain = garbageGain.add(garbageGain.mul(layers.m.effect2().div(100)))
 		if(inChallenge("mw", 12)) garbageGain = garbageGain.div(3.1415926535897932384626433832795)
 		if(hasUpgrade("ou", 11)) player.ou.garbagePoints = player.ou.garbagePoints.add(garbageGain)
-		if(player.ou.garbagePoints.gte(player.ou.garbageRequirement))    {if((player.ou.garbageLevel.eq(0.6)&&!hasChallenge("rw",21))||player.ou.garbageLevel.eq(1.2)) {
+		if(player.ou.garbagePoints.gte(player.ou.garbageRequirement))    {if((player.ou.garbageLevel.eq(0.6)&&!hasChallenge("rw",21))) {
 																			 player.ou.garbagePoints = player.ou.garbageRequirement}
 			                                                           else {player.ou.garbagePoints = player.ou.garbagePoints.sub(player.ou.garbageRequirement)
 																		     player.ou.garbageLevel = new Decimal(player.ou.garbageLevel.add(0.1).toFixed(1))
@@ -211,6 +219,24 @@ addLayer("ou", {
 			done() { return player.ou.garbageLevel.gte(1.2) },
 			unlocked() {return hasMilestone("ou", 9)}
 		},
+		12: {
+			requirementDescription: "Version 1.3",
+			effectDescription() {return "Reach v1.3<br/>Reward: Garbage Generator is boosted by ^1.01"},
+			done() { return player.ou.garbageLevel.gte(1.3) },
+			unlocked() {return hasMilestone("ou", 9)}
+		},
+		13: {
+			requirementDescription: "Version 1.4",
+			effectDescription() {return "Reach v1.4<br/>Reward: Better Garbage Generator's effect is cubed"},
+			done() { return player.ou.garbageLevel.gte(1.4) },
+			unlocked() {return hasMilestone("ou", 9)}
+		},
+		14: {
+			requirementDescription: "Version 1.5",
+			effectDescription() {return "Reach v1.5<br/>Reward: We ran out of ideas for every minor update, so here's the last minor update reward...<br><br>Brings back manual garbage collecting"},
+			done() { return player.ou.garbageLevel.gte(1.5) },
+			unlocked() {return hasMilestone("ou", 9)}
+		},
 	},
 	buyables: {
 		rows: 1,
@@ -223,7 +249,7 @@ addLayer("ou", {
 				if(player.ou.garbageLevel.gte(0.3)) base = new Decimal(2)
 				player.ou.garbagePoints = player.ou.garbagePoints.add(base)
 			},
-			unlocked() {return hasUpgrade("ou", 11)&&!hasMilestone("ou", 8)},
+			unlocked() {return (hasUpgrade("ou", 11)&&!hasMilestone("ou", 8)) || hasMilestone("ou", 14)},
 			style() { return {
 				"height": "83px",
 				"width": "292px",
@@ -277,12 +303,20 @@ addLayer("m", {
 		mps: new Decimal(0),
 		garbageWaves: new Decimal(0),
 		gps: new Decimal(0),
+		switch1: new Decimal(0),
+		switch2: new Decimal(0),
     }},
 	update(diff){
-		player.m.points = player.m.points.add(layers.m.buyables[11].effect().mul(layers.m.buyables[11].effect2()).mul(new Decimal(diff)))
-		player.m.mps = layers.m.buyables[11].effect().mul(layers.m.buyables[11].effect2())
-		player.m.garbageWaves = player.m.garbageWaves.add(layers.m.buyables[12].effect().mul(layers.m.buyables[12].effect2()).mul(new Decimal(diff)))
-		player.m.gps = layers.m.buyables[12].effect().mul(layers.m.buyables[12].effect2())
+		if(player.m.switch1.eq(0)){player.m.points = player.m.points.add(layers.m.buyables[11].effect().mul(layers.m.buyables[11].effect2()).mul(new Decimal(diff)))
+								   player.m.mps = layers.m.buyables[11].effect().mul(layers.m.buyables[11].effect2())}
+		else if(hasChallenge("i", 12)){player.m.points = player.m.points.add(layers.m.buyables[11].effect().mul(layers.m.buyables[11].effect2()).mul(new Decimal(diff)).div(2))
+										player.m.mps = layers.m.buyables[11].effect().mul(layers.m.buyables[11].effect2()).div(2)}
+		else player.m.mps = new Decimal(0)
+		if(player.m.switch2.eq(0)){player.m.garbageWaves = player.m.garbageWaves.add(layers.m.buyables[12].effect().mul(layers.m.buyables[12].effect2()).mul(new Decimal(diff)))
+								   player.m.gps = layers.m.buyables[12].effect().mul(layers.m.buyables[12].effect2())}
+		else if(hasChallenge("i", 12)){player.m.garbageWaves = player.m.garbageWaves.add(layers.m.buyables[12].effect().mul(layers.m.buyables[12].effect2()).mul(new Decimal(diff)).div(2))
+									   player.m.gps = layers.m.buyables[12].effect().mul(layers.m.buyables[12].effect2()).div(2)}
+		else player.m.gps = new Decimal(0)
 	},
 	effect(){ return player.m.points.mul(100).root(3) },
 	effect2(){ return player.m.garbageWaves.mul(100).root(2) },
@@ -313,7 +347,7 @@ addLayer("m", {
     },
     row: "side", // Row the layer is in on the tree (0 is the first row)
 	buyables: {
-		rows: 1,
+		rows: 2,
 		cols: 2,
 		11: {
 			cost() { return new Decimal(2450000000).mul(new Decimal(10).pow(player.m.buyables[11])) },
@@ -345,6 +379,34 @@ addLayer("m", {
 			unlocked() {return (hasChallenge("rw", 31) || player.m.unlocked) && player.s.points.gte(2)},
 			style() { return {
 				"height": "154px",
+				"width": "234px",
+				"font-size": "20px"
+			}}
+		},
+		21: {
+			display() { return player.m.switch1.eq(0) ? "Turn off Microwavewaves" : "Turn on Microwavewaves" },
+			canAfford() { return true },
+			buy() {
+				if(player.m.switch1.eq(0)) player.m.switch1 = player.m.switch1.add(1)
+				else if(player.m.switch1.eq(1)) player.m.switch1 = player.m.switch1.sub(1)
+			},
+			unlocked() {return hasUpgrade("i", 12)},
+			style() { return {
+				"height": "77px",
+				"width": "234px",
+				"font-size": "20px"
+			}}
+		},
+		22: {
+			display() { return player.m.switch2.eq(0) ? "Turn off Garbagewaves" : "Turn on Garbagewaves" },
+			canAfford() { return true },
+			buy() {
+				if(player.m.switch2.eq(0)) player.m.switch2 = player.m.switch2.add(1)
+				else if(player.m.switch2.eq(1)) player.m.switch2 = player.m.switch2.sub(1)
+			},
+			unlocked() {return hasUpgrade("i", 12)},
+			style() { return {
+				"height": "77px",
 				"width": "234px",
 				"font-size": "20px"
 			}}
@@ -546,7 +608,7 @@ addLayer("s", {
     baseResource: "hertz",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
 
-    requires() {return player.s.points.eq(2) ? new Decimal(999999999).pow(999999999).pow(999999999) : player.s.points.eq(1) ? new Decimal(36000000000) : new Decimal(50000000000)},              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires() {return player.s.points.eq(3) ? new Decimal(999999999).pow(999999999).pow(999999999) : player.s.points.eq(2) ? new Decimal(22422771727.748691099476439790576) : player.s.points.eq(1) ? new Decimal(36000000000) : new Decimal(50000000000)},              // The amount of the base needed to  gain 1 of the prestige currency.
 
     type: "static",                         // Determines the formula used for calculating prestige currency.
     exponent: 1,                          // "normal" prestige gain is (currency^exponent).
@@ -570,10 +632,19 @@ addLayer("s", {
 			effectDescription: "Unlocks the Garbagewave and \"Garbagelength Transformation\" clickable",
 			done() { return player.s.points.gte(2) },
 			unlocked() {return hasMilestone("s", 0)}
+		},
+		2: {
+			requirementDescription: "3 spectrum resets",
+			effectDescription: "2nd, 3rd, 4th and 5th Observable Universe upgrades's effect are squared",
+			done() { return player.s.points.gte(3) },
+			unlocked() {return hasMilestone("s", 1)}
 		}
 	},
 	doReset(resettingLayer){ // Triggers when this layer is being reset, along with the layer doing the resetting. Not triggered by lower layers resetting, but is by layers on the same row.
         if(layers[resettingLayer].row == "side") {
+			player.m.switch1 = new Decimal(0)
+			player.m.switch2 = new Decimal(0)
+			player.i.challenges[11] = 0
 			player.i.upgrades = []
 			player.i.milestones = []
 			player.mw.challenges[11] = 0
@@ -590,6 +661,7 @@ addLayer("s", {
 			player.ou.milestones = []
 			player.ou.upgrades = []
 			player.points = modInfo.initialStartPoints
+			player[layer].activeChallenge = null
 		}
 	},
 
@@ -622,7 +694,7 @@ addLayer("i", {
 			content: ["upgrades"],
 		},
 		"Challenges": {
-			content: [["display-text", function() {return "¯\\_(ツ)_/¯"}]],
+			content: [["display-text", function() {return hasMilestone("i", 2) ? "" : hasMilestone("i", 1) ? "Next challenge unlocks at 200μm" : "Next challenge unlocks at 640μm"}], "challenges"],
 		},
 	},
     color() {return player.points.gte(213851953373333.33333333333333334) ? "#DA0505" : player.points.gte(99930819333333.333333333333333335) ? "#B40A0A" : player.points.gte(36974403153333.333333333333333333) ? "#8F0F0F" : player.points.gte(19986163866666.666666666666666667) ? "#6A1515" : player.points.gte(299792458000) ? "#441A1A" : "#1F1F1F"},
@@ -637,8 +709,8 @@ addLayer("i", {
     },
     row: 2, // Row the layer is in on the tree (0 is the first row)
 	upgrades:{
-		rows: 1,
-		cols: 1,
+		rows: 2,
+		cols: 3,
 		11: {
 			fullDisplay: `<h3>Heat Acceleration</h3><br>
 						 Microwaves additionally gains 193% more strength per active infrared softcap<br>
@@ -651,12 +723,100 @@ addLayer("i", {
 				"height": "130px"
 			}}
 		},
+		12: {
+			fullDisplay: `<h3>Remote Control</h3><br>
+						 Now you can turn off microwaves's production to boost Wavelength Shrinker based on bought microwaves<br>
+						 [Wavelength Reset]<br><br>
+						<h4>Requirement: 725.64μm<br>`,
+			canAfford() {return new Decimal(299792458).div(player.points).lte(0.00072564)},
+			onPurchase() {return player.points = modInfo.initialStartPoints},
+			unlocked() {return hasMilestone("ou", 1)},
+			style() { return {
+				"height": "130px"
+			}}
+		},
+		13: {
+			fullDisplay: `<h3>Heat Radiation</h3><br>
+						 Wavelength Shrinker gains additional +10% boost to it's production per infrared upgrade<br>
+						 [Wavelength Reset]<br><br>
+						<h4>Requirement: 849.54μm<br>`,
+			canAfford() {return new Decimal(299792458).div(player.points).lte(0.00084954)},
+			onPurchase() {return player.points = modInfo.initialStartPoints},
+			unlocked() {return hasMilestone("ou", 1)},
+			style() { return {
+				"height": "130px"
+			}}
+		},
+		21: {
+			fullDisplay: `<h3>Night Vision</h3><br>
+						 Wavelength Shrinker works twice better in challenges<br>
+						 [Wavelength Reset]<br><br>
+						<h4>Requirement: 90m<br>`,
+			canAfford() {return new Decimal(299792458).div(player.points).lte(90)},
+			onPurchase() {return player.points = modInfo.initialStartPoints},
+			unlocked() {return inChallenge("i", 11) || hasUpgrade("i", 21)},
+			style() { return {
+				"height": "130px"
+			}}
+		},
+		22: {
+			fullDisplay: `<h3>In-fried Car-bag-e</h3><br>
+						 Heat Acceleration boosts Garbage Generator<br>
+						 [Wavelength Reset]<br><br>
+						<h4>Requirement: 6m<br>`,
+			canAfford() {return new Decimal(299792458).div(player.points).lte(6)},
+			onPurchase() {return player.points = modInfo.initialStartPoints},
+			unlocked() {return inChallenge("i", 11) || hasUpgrade("i", 22)},
+			style() { return {
+				"height": "130px"
+			}}
+		},
+		23: {
+			fullDisplay: `<h3>Infrared Cooling</h3><br>
+						 Weakens Infra-caps's root by +0.5<br>
+						 [Wavelength Reset]<br><br>
+						<h4>Requirement: 2cm<br>`,
+			canAfford() {return new Decimal(299792458).div(player.points).lte(0.02)},
+			onPurchase() {return player.points = modInfo.initialStartPoints},
+			unlocked() {return inChallenge("i", 11) || hasUpgrade("i", 23)},
+			style() { return {
+				"height": "130px"
+			}}
+		},
+	},
+	challenges: {
+		rows: 1,
+		cols: 2,
+		11: {
+			name: "Chu Chu Real Slow",
+			challengeDescription(){return "WS's effeciency is slowed down by "+format(new Decimal(16777216).root(player.ou.garbagePoints.add(1).root(256)))+" times based on how little garbage you have. You get to buy 3 more Infrared upgrades within this challenge"},
+			rewardDescription: "\"Version 0.7\" milestone affects Garbage Generator",
+			currencyDisplayName: "hertz",
+			goal: new Decimal(299792458/13),
+			unlocked() {return hasMilestone("i", 1)}
+		},
+		12: {
+			name: "Ugh...",
+			challengeDescription(){return "WS's effeciency is slowed down by "+format(new Decimal(16777216).pow(player.points.add(1).root(69)))+" times based on how much points you have"},
+			rewardDescription: "Turning off microwaves halves production instead",
+			currencyDisplayName: "hertz",
+			goal: new Decimal(13020000),
+			unlocked() {return hasMilestone("i", 2)}
+		},
 	},
 	milestones: {
 		0: {
 			done() { return player.points.gte(299792458000) },
 			unlocked() {return false}
-		}
+		},
+		1: {
+			done() { return player.points.gte(468425715625) },
+			unlocked() {return false}
+		},
+		2: {
+			done() { return player.points.gte(1498962290000) },
+			unlocked() {return false}
+		},
 	},
     layerShown(){return hasMilestone("i", 0)},
 	tooltip: "Infrared Radiations"
